@@ -35,7 +35,8 @@ class Clock
     # minutes = "0#{minutes}" if minutes < 10
     seconds = @time.round % 60
     seconds = "0#{seconds}" if seconds < 10
-    "#{minutes}:#{seconds}"
+    return "#{minutes}:#{seconds}" if @time.round.even?
+    return "#{minutes}<c=000000>:</c>#{seconds}" if @time.round.odd?
   end
 
   def update_clock

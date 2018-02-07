@@ -1,13 +1,14 @@
 class Clock
+  CLOCK_SIZE = 500
   attr_accessor :running
   attr_reader :time
 
   def initialize
     $window.elements << self
     # Preload characters to prevent really long draw calls when first running clock.
-    cache = Text.new(":0123456789", size: 488, alignment: :center)
+    cache = Text.new(":0123456789", size: CLOCK_SIZE, alignment: :center)
     cache = nil
-    @text = Text.new("2:30", size: 488, alignment: :center)
+    @text = Text.new("2:30", size: CLOCK_SIZE, alignment: :center, shadow_size: 2)
     @text.y = ($window.height/2)-(@text.height/4)*3
     @time = (60*2+30).to_f
     @running = false
@@ -38,7 +39,7 @@ class Clock
     seconds = @time.round % 60
     seconds = "0#{seconds}" if seconds < 10
     return "#{minutes}:#{seconds}" if @time.round.even?
-    return "#{minutes}<c=333333>:</c>#{seconds}" if @time.round.odd?
+    return "#{minutes}<c=999999>:</c>#{seconds}" if @time.round.odd?
   end
 
   def update_clock

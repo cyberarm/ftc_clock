@@ -54,10 +54,10 @@ class Clock
       @text.color = Gosu::Color::WHITE
     when :teleop
       @time = (60*2).to_f
-      @text.color = Gosu::Color::BLUE
+      @text.color = Gosu::Color::WHITE
     when :autonomous
       @time = (30).to_f
-      @text.color = Gosu::Color::RED
+      @text.color = Gosu::Color.rgb(139,0,0)
     when :resume
     end
     @running = true

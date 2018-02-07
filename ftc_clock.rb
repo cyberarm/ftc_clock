@@ -4,7 +4,7 @@ require_relative "lib/button"
 require_relative "lib/clock"
 
 class FtcClock < Gosu::Window
-  attr_reader :elements, :mouse_last_moved
+  attr_reader :elements, :mouse_last_moved, :clock
   Mouse = Struct.new(:x, :y)
 
   def initialize
@@ -44,17 +44,25 @@ class FtcClock < Gosu::Window
   end
 
   def draw
-    @fps.draw unless Time.now-@mouse_last_moved >= 1.5
-    @title.draw unless Time.now-@mouse_last_moved >= 1.5
+    @fps.draw if should_render?
+    @title.draw
     @elements.each(&:draw)
   end
 
   def update
     @mouse_last_moved = Time.now unless @mouse.x == self.mouse_x && @mouse.y == self.mouse_y
     @mouse.x, @mouse.y = self.mouse_x, self.mouse_y
-    (Time.now-@mouse_last_moved >= 1.5) ? @show_cursor = false : @show_cursor = true
+    should_render? ? @show_cursor = true : @show_cursor = false
     @fps.text = "FPS: #{Gosu.fps}"
     @elements.each(&:update)
+  end
+
+  def should_render?
+    if Time.now-@mouse_last_moved >= 1.5 && @clock.running
+      false
+    else
+      true
+    end
   end
 
   def needs_cursor?

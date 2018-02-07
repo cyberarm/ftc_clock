@@ -16,7 +16,7 @@ class Clock
   end
 
   def update
-    pause if @time <= 0.0
+    @running = false if @time <= 0.0
     update_clock
     @wall_time = Time.now
     @text.text = "#{clock_time}"

@@ -35,10 +35,10 @@ class Button
   end
 
   def should_render?
-    if (Time.now-$window.mouse_last_moved) <= 1.5
-      true
-    else
+    if (Time.now-$window.mouse_last_moved) >= 1.5  && $window.clock.running
       false
+    else
+      true
     end
   end
 

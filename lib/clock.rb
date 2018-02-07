@@ -1,5 +1,6 @@
 class Clock
   CLOCK_SIZE = 500
+  SAMPLES = {}
   attr_accessor :running
   attr_reader :time
 
@@ -46,8 +47,11 @@ class Clock
     if @running
       @time-=Time.now-@wall_time
       @time = 0 if @time < 0
+      play_sound(:end_match) if @time <= 0.0 && @mode != :autonomous
+      play_sound(:autonomous_ended) if @time <= 0.0 && @mode == :autonomous
       @text.color = Gosu::Color.rgb(139,0,0) if @time.round < 30
       if @mode == :normal && @time.round == 120 && !@period_pause
+        play_sound(:autonomous_ended)
         @running = false
         @period_pause = true
         $window.pause.text.text = "Resume"
@@ -73,6 +77,7 @@ class Clock
       @text.color = Gosu::Color::WHITE
     when :resume
     end
+    play_sound(:start_match)
     @running = true
   end
 
@@ -90,5 +95,21 @@ class Clock
     @period_pause = false
     @text.color = Gosu::Color::WHITE
     @time = (60*2+30).to_f
+  end
+
+  def play_sound(sound)
+    path = nil
+    case sound
+    when :start_match
+      path = "./media/charge.wav"
+    when :autonomous_ended
+      path = "./media/endauto.wav"
+    when :end_match
+      path = "./media/endmatch.wav"
+    end
+    if path && File.exist?(path)
+      SAMPLES[path] = Gosu::Sample.new(path) unless SAMPLES[path].is_a?(Gosu::Sample)
+      SAMPLES[path].play
+    end
   end
 end

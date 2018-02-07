@@ -75,8 +75,9 @@ class Text
 
   def draw
     if @shadow && !ARGV.join.include?("--no-shadow")
-      _color = Gosu::Color.rgba(@color.red, @color.green, @color.blue, @shadow_alpha) if @shadow_alpha <= @color.alpha
-      _color = Gosu::Color.rgba(@color.red, @color.green, @color.blue, @color.alpha) unless @shadow_alpha <= @color.alpha
+      # _color = Gosu::Color.rgba(@color.red, @color.green, @color.blue, @shadow_alpha) if @shadow_alpha <= @color.alpha
+      # _color = Gosu::Color.rgba(@color.red, @color.green, @color.blue, @color.alpha) unless @shadow_alpha <= @color.alpha
+      _color = Gosu::Color.rgba(255,255,255,@shadow_alpha)
       @textobject.draw(@text, @x-@shadow_size, @y, @z, @factor_x, @factor_y, _color)
       @textobject.draw(@text, @x-@shadow_size, @y-@shadow_size, @z, @factor_x, @factor_y, _color)
 

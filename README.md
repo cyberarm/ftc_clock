@@ -15,7 +15,7 @@ A simple match clock for practice purposes
 Add sounds to /media for the 5 main match sounds.
 * `charge.wav` - Match has started sound
 * `endauto.wav` - Autonomous ended sound
-* `firebell.wav` - TelOp has begun sound
+* `firebell.wav` - TeleOp has begun sound
 * `factwhistle.wav` - End game has begun sound
 * `endmatch.wav` - Match has ended sound
 

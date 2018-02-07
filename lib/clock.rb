@@ -11,6 +11,8 @@ class Clock
     @text.y = ($window.height/2)-(@text.height/4)*3
     @time = (60*2+30).to_f
     @running = false
+    @period_pause = false
+    @mode = :paused
     @wall_time = Time.now
   end
 
@@ -36,13 +38,19 @@ class Clock
     seconds = @time.round % 60
     seconds = "0#{seconds}" if seconds < 10
     return "#{minutes}:#{seconds}" if @time.round.even?
-    return "#{minutes}<c=000000>:</c>#{seconds}" if @time.round.odd?
+    return "#{minutes}<c=333333>:</c>#{seconds}" if @time.round.odd?
   end
 
   def update_clock
     if @running
       @time-=Time.now-@wall_time
       @time = 0 if @time < 0
+      @text.color = Gosu::Color.rgb(139,0,0) if @time.round < 30
+      if @mode == :normal && @time.round == 120 && !@period_pause
+        @running = false
+        @period_pause = true
+        $window.pause.text.text = "Resume"
+      end
     end
   end
 
@@ -50,14 +58,18 @@ class Clock
     @wall_time = Time.now
     case mode
     when :normal
+      @mode = :normal
+      @period_pause = false
       @time = (60*2+30).to_f
       @text.color = Gosu::Color::WHITE
     when :teleop
+      @mode = :teleop
       @time = (60*2).to_f
       @text.color = Gosu::Color::WHITE
     when :autonomous
+      @mode = :autonomous
       @time = (30).to_f
-      @text.color = Gosu::Color.rgb(139,0,0)
+      @text.color = Gosu::Color::WHITE
     when :resume
     end
     @running = true
@@ -74,6 +86,7 @@ class Clock
   def reset
     @mode = :paused
     @running = false
+    @period_pause = false
     @text.color = Gosu::Color::WHITE
     @time = (60*2+30).to_f
   end

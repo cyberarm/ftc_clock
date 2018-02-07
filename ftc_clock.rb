@@ -4,7 +4,7 @@ require_relative "lib/button"
 require_relative "lib/clock"
 
 class FtcClock < Gosu::Window
-  attr_reader :elements, :mouse_last_moved, :clock
+  attr_reader :elements, :mouse_last_moved, :clock, :pause
   Mouse = Struct.new(:x, :y)
 
   def initialize
@@ -19,10 +19,10 @@ class FtcClock < Gosu::Window
 
     @clock = Clock.new
 
-    Button.new("Start", alignment: :center, y: self.height-300) do
+    Button.new("Reset and Start", alignment: :center, y: self.height-300) do
       @clock.start
     end
-    pause = Button.new("Pause", alignment: :center, y: self.height-200) do |button|
+    @pause = Button.new("Pause", alignment: :center, y: self.height-200) do |button|
       if @clock.time.round(1) != 0.0 && @clock.time.round(1) != 150.0
         @clock.pause
         button.text.text = "Resume" if !@clock.running
@@ -30,15 +30,15 @@ class FtcClock < Gosu::Window
       end
     end
     Button.new("Reset", alignment: :center, y: self.height-100) do
-      pause.text.text = "Pause"
+      @pause.text.text = "Pause"
       @clock.reset
     end
 
 
-    Button.new("TelOp Only", alignment: :right, y: self.height-200) do
+    Button.new("Start TelOp Only", alignment: :right, y: self.height-200) do
       @clock.start(:teleop)
     end
-    Button.new("Autonomous Only", alignment: :right, y: self.height-100) do
+    Button.new("Start Autonomous Only", alignment: :right, y: self.height-100) do
       @clock.start(:autonomous)
     end
   end

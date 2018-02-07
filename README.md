@@ -12,9 +12,11 @@ A simple match clock for practice purposes
 `$ ruby ftc_clock.rb "Optional Clock Title"`
 
 ## Sounds
-Add sounds to /media for the 3 main match sounds.
-* `change.wav` - Match has started sound
+Add sounds to /media for the 5 main match sounds.
+* `charge.wav` - Match has started sound
 * `endauto.wav` - Autonomous ended sound
+* `firebell.wav` - TelOp has begun sound
+* `factwhistle.wav` - End game has begun sound
 * `endmatch.wav` - Match has ended sound
 
 Sounds are not included as I could not find licensing information.

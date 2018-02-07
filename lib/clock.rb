@@ -14,6 +14,7 @@ class Clock
     @time = (60*2+30).to_f
     @running = false
     @period_pause = false
+    @end_game_begun = false
     @mode = :paused
     @wall_time = Time.now
   end
@@ -56,6 +57,11 @@ class Clock
         @period_pause = true
         $window.pause.text.text = "Resume"
       end
+
+      if (@mode == :normal || @mode == :teleop) && @time.round == 30 && !@end_game_begun
+        @end_game_begun = true
+        play_sound(:end_game)
+      end
     end
   end
 
@@ -63,21 +69,25 @@ class Clock
     @wall_time = Time.now
     case mode
     when :normal
+      play_sound(:start_match)
       @mode = :normal
       @period_pause = false
+      @end_game_begun = false
       @time = (60*2+30).to_f
       @text.color = Gosu::Color::WHITE
     when :teleop
+      play_sound(:teleop_started)
       @mode = :teleop
+      @end_game_begun = false
       @time = (60*2).to_f
       @text.color = Gosu::Color::WHITE
     when :autonomous
+      play_sound(:start_match)
       @mode = :autonomous
       @time = (30).to_f
       @text.color = Gosu::Color::WHITE
     when :resume
     end
-    play_sound(:start_match)
     @running = true
   end
 
@@ -85,6 +95,7 @@ class Clock
     if @running
       @running = false
     else
+      play_sound(:teleop_started) if @mode == :normal && @period_pause && @time.round == 120
       @running = true
     end
   end
@@ -93,6 +104,7 @@ class Clock
     @mode = :paused
     @running = false
     @period_pause = false
+    @end_game_begun = false
     @text.color = Gosu::Color::WHITE
     @time = (60*2+30).to_f
   end
@@ -104,6 +116,10 @@ class Clock
       path = "./media/charge.wav"
     when :autonomous_ended
       path = "./media/endauto.wav"
+    when :teleop_started
+      path = "./media/firebell.wav"
+    when :end_game
+      path = "./media/factwhistle.wav"
     when :end_match
       path = "./media/endmatch.wav"
     end

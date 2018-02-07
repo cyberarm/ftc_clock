@@ -4,6 +4,9 @@ class Clock
 
   def initialize
     $window.elements << self
+    # Preload characters to prevent really long draw calls when first running clock.
+    cache = Text.new(":0123456789", size: 488, alignment: :center)
+    cache = nil
     @text = Text.new("2:30", size: 488, alignment: :center)
     @text.y = ($window.height/2)-(@text.height/4)*3
     @time = (60*2+30).to_f
@@ -19,7 +22,7 @@ class Clock
     @running = false if @time <= 0.0
     update_clock
     @wall_time = Time.now
-    @text.text = "#{clock_time}"
+    @text.text = "#{clock_time}" unless @text.text == clock_time
   end
 
   def clock_time

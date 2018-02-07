@@ -23,6 +23,12 @@ class Text
     @shadow_alpha= options[:shadow_alpha] ? options[:shadow_alpha] : 30
     @textobject = check_cache(@size, @font)
 
+    align_text
+
+    return self
+  end
+
+  def align_text
     if @alignment
       case @alignment
       when :left
@@ -33,8 +39,6 @@ class Text
         @x = $window.width-(Button::PADDING*2)-@textobject.text_width(@text)
       end
     end
-
-    return self
   end
 
   def check_cache(size, font_name)

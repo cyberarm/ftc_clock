@@ -74,6 +74,11 @@ class FtcClock < Gosu::Window
     @elements.each do |e|
       e.button_up(id) if defined?(e.button_up)
     end
+
+    if id == Gosu::KbEscape
+      puts "Closing..."
+      close
+    end
   end
 end
 

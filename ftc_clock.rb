@@ -4,22 +4,33 @@ require_relative "lib/button"
 require_relative "lib/clock"
 
 class FtcClock < Gosu::Window
-  attr_reader :elements
+  attr_reader :elements, :mouse_last_moved
+  Mouse = Struct.new(:x, :y)
 
   def initialize
-    super(Gosu.screen_width, Gosu.screen_height, true)
+    super(Gosu.screen_width, Gosu.screen_height, true, 1000.0/24)
     $window = self
     @elements = []
+    @fps = Text.new("FPS: 0", size: 18, color: Gosu::Color::GRAY)
+    @title = Text.new("#{ARGV.size > 0 ? ARGV[0].upcase : 'First Tech Challenge'.upcase}", font: "Sans Serif", size: 96, y: 10, alignment: :center, color: Gosu::Color::WHITE)
+    @mouse_last_moved = Time.now
+    @show_cursor = true
+    @mouse = Mouse.new(self.mouse_x, self.mouse_y)
 
     @clock = Clock.new
 
-    Button.new("Start", alignment: :center, y: self.height-300) do |button|
+    Button.new("Start", alignment: :center, y: self.height-300) do
       @clock.start
     end
-    Button.new("Pause", alignment: :center, y: self.height-200) do |button|
-      @clock.pause
+    pause = Button.new("Pause", alignment: :center, y: self.height-200) do |button|
+      if @clock.time.round(1) != 0.0 && @clock.time.round(1) != 150.0
+        @clock.pause
+        button.text.text = "Resume" if !@clock.running
+        button.text.text = "Pause" if @clock.running
+      end
     end
     Button.new("Reset", alignment: :center, y: self.height-100) do
+      pause.text.text = "Pause"
       @clock.reset
     end
 
@@ -33,15 +44,21 @@ class FtcClock < Gosu::Window
   end
 
   def draw
+    @fps.draw unless Time.now-@mouse_last_moved >= 1.5
+    @title.draw unless Time.now-@mouse_last_moved >= 1.5
     @elements.each(&:draw)
   end
 
   def update
+    @mouse_last_moved = Time.now unless @mouse.x == self.mouse_x && @mouse.y == self.mouse_y
+    @mouse.x, @mouse.y = self.mouse_x, self.mouse_y
+    (Time.now-@mouse_last_moved >= 1.5) ? @show_cursor = false : @show_cursor = true
+    @fps.text = "FPS: #{Gosu.fps}"
     @elements.each(&:update)
   end
 
   def needs_cursor?
-    true
+    @show_cursor
   end
 
   def button_up(id)

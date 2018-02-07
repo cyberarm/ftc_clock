@@ -10,24 +10,35 @@ class Button
     @hover_color = options[:hover_color] ? options[:hover_color] : Gosu::Color.rgb(50,50,250)
 
     @active_background_color = @background_color
+    return self
   end
 
   def draw
-    @text.draw
-    $window.draw_rect(@text.x-PADDING, @text.y-PADDING, @text.width+PADDING*2, @text.height+PADDING*2, @active_background_color)
+    if should_render?
+      @text.draw
+      $window.draw_rect(@text.x-PADDING, @text.y-PADDING, @text.width+PADDING*2, @text.height+PADDING*2, @active_background_color)
+    end
   end
 
   def update
     if mouse_over?
-      @active_background_color = @hover_color
+      @active_background_color = @hover_color unless @active_background_color == @hover_color
     else
-      @active_background_color = @background_color
+      @active_background_color = @background_color unless @active_background_color == @background_color
     end
   end
 
   def button_up(id)
-    if mouse_over? && id == Gosu::MsLeft
+    if should_render? && mouse_over? && id == Gosu::MsLeft
       @block.call(self) if @block
+    end
+  end
+
+  def should_render?
+    if (Time.now-$window.mouse_last_moved) <= 1.5
+      true
+    else
+      false
     end
   end
 

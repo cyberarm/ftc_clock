@@ -35,7 +35,7 @@ class FtcClock < Gosu::Window
     end
 
 
-    Button.new("Start TeloOp Only", alignment: :right, y: self.height-200) do
+    Button.new("Start TeleOp Only", alignment: :right, y: self.height-200) do
       @clock.start(:teleop)
     end
     Button.new("Start Autonomous Only", alignment: :right, y: self.height-100) do

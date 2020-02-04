@@ -84,7 +84,6 @@ class ClockController
       @events.delete(event)
 
       if event.arguments
-        pp event
         self.send(event.event, *event.arguments)
       else
         self.send(event.event)
@@ -104,6 +103,14 @@ class ClockController
     @elapsed_time += dt
   end
 
+  def clock?
+    @clock_running
+  end
+
+  def countdown?
+    @countdown_running
+  end
+
   def time_left
     if @clock_running
       return @clock_time
@@ -118,26 +125,30 @@ class ClockController
     path = nil
     case sound
     when :autonomous_countdown
-      path = "./media/3-2-1.wav"
+      path = "media/3-2-1.wav"
     when :autonomous_start
-      path = "./media/charge.wav"
+      path = "media/charge.wav"
     when :autonomous_ended
-      path = "./media/endauto.wav"
+      path = "media/endauto.wav"
     when :teleop_pickup_controllers
-      path = "./media/Pick_Up_Controllers.wav"
+      path = "media/Pick_Up_Controllers.wav"
     when :teleop_countdown
-      path = "./media/3-2-1.wav"
+      path = "media/3-2-1.wav"
     when :teleop_started
-      path = "./media/firebell.wav"
+      path = "media/firebell.wav"
     when :end_game
-      path = "./media/factwhistle.wav"
+      path = "media/factwhistle.wav"
     when :end_match
-      path = "./media/endmatch.wav"
+      path = "media/endmatch.wav"
     end
+
+    path = "#{ROOT_PATH}/#{path}"
 
     if path && File.exist?(path)
       SAMPLES[path] = Gosu::Sample.new(path) unless SAMPLES[path].is_a?(Gosu::Sample)
       SAMPLES[path].play
+    else
+      warn "WARNING: Sample for #{sound.inspect} could not be found at '#{path}'"
     end
   end
 end

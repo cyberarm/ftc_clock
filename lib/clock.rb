@@ -1,8 +1,8 @@
 class Clock
-  CLOCK_SIZE = 500
-  SAMPLES = {}
+  CLOCK_SIZE = Gosu.screen_height
+
   def initialize
-    @text = CyberarmEngine::Text.new(":1234567890", size: 500, align: :center)
+    @text = CyberarmEngine::Text.new(":1234567890", size: CLOCK_SIZE, text_shadow: true, shadow_size: 2, shadow_color: Gosu::Color::GRAY)
     @text.width # trigger font-eager loading
 
     @controller = nil
@@ -22,6 +22,9 @@ class Clock
     else
       @text.text = "0:00"
     end
+
+    @text.x = $window.width / 2 - @text.textobject.text_width("0:00") / 2
+    @text.y = $window.height / 2 - @text.height / 2
   end
 
   def clock_time(time_left)

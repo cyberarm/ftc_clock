@@ -1,4 +1,5 @@
 module EventHandlers
+  ### Clock ###
   def start_clock
     @clock_running = true
   end
@@ -11,6 +12,7 @@ module EventHandlers
     @clock_time = time_from_string(value)
   end
 
+  ### Countdown ###
   def start_countdown
     @countdown_running = true
   end
@@ -29,8 +31,8 @@ module EventHandlers
 
   private def time_from_string(string)
     split = string.split(":")
-    minutes = Integer(split.first) * 60
-    seconds = Integer(split.last)
+    minutes = (split.first.to_i) * 60
+    seconds = (split.last.to_i)
 
     return minutes + seconds
   end

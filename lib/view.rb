@@ -77,7 +77,7 @@ class View < CyberarmEngine::GuiState
             @jukebox.next_track
           end
 
-          button "Music Library", margin_left: 50 do
+          button "Open Music Library", margin_left: 50 do
             if RUBY_PLATFORM.match(/ming|msys|cygwin/)
               # TODO: windows
             elsif RUBY_PLATFORM.match(/linux/)
@@ -86,11 +86,21 @@ class View < CyberarmEngine::GuiState
               # TODO.
             end
           end
+
+          button "SFX: ♪", margin_left: 50 do |button|
+            boolean = @jukebox.toggle_sfx
+
+            if boolean
+              button.value = "SFX: ♪"
+            else
+              button.value = "SFX: Off"
+            end
+          end
         end
       end
     end
 
-    @jukebox = Jukebox.new(@current_song_label)
+    @jukebox = Jukebox.new(@clock, @current_song_label)
   end
 
   def draw

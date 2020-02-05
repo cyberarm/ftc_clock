@@ -34,6 +34,14 @@ class Clock
     @text.y = $window.height / 2 - @text.height / 2
   end
 
+  def active?
+    if @controller
+      @controller.clock? || @controller.countdown?
+    else
+      return false
+    end
+  end
+
   def clock_time(time_left)
     minutes = (time_left / 60.0).to_s.split(".").first.to_i
     if minutes == 0 && (time_left >= 59.4)

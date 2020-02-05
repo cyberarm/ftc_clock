@@ -1,12 +1,27 @@
 class Jukebox
   MUSIC = Dir.glob(ROOT_PATH + "/media/music/*.*").freeze
 
-  def initialize(label)
+  if File.exist?(ROOT_PATH + "/media/skystone")
+    BEEPS_AND_BOOPS = Dir.glob(ROOT_PATH + "/media/skystone/*.*").freeze
+  end
+
+  def initialize(clock, label)
+    @clock = clock
     @label = label
 
     @order = MUSIC.shuffle
     @now_playing = ""
     @playing = false
+
+    @last_sfx_time = Gosu.milliseconds
+    @sfx_random_interval = generate_sfx_period
+    @play_sfx = true
+
+    if defined?(BEEPS_AND_BOOPS)
+      BEEPS_AND_BOOPS.each do |beep|
+        SAMPLES[beep] = Gosu::Sample.new(beep)
+      end
+    end
   end
 
   private def song
@@ -18,6 +33,27 @@ class Jukebox
       next_track
     end
 
+    if @play_sfx && defined?(BEEPS_AND_BOOPS) && !@clock.active?
+      play_sfx
+    end
+  end
+
+  def play_sfx
+    if Gosu.milliseconds - @last_sfx_time >= @sfx_random_interval
+      @last_sfx_time = Gosu.milliseconds
+      @sfx_random_interval = generate_sfx_period
+
+      SAMPLES[BEEPS_AND_BOOPS.sample].play
+    end
+  end
+
+  def generate_sfx_period
+    # rand(15..120) * 1000.0
+    rand(5..10) * 1000.0
+  end
+
+  def toggle_sfx
+    @play_sfx = !@play_sfx
   end
 
   def play

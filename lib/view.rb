@@ -76,6 +76,16 @@ class View < CyberarmEngine::GuiState
           button "→" do
             @jukebox.next_track
           end
+
+          button "Music Library", margin_left: 50 do
+            if RUBY_PLATFORM.match(/ming|msys|cygwin/)
+              # TODO: windows
+            elsif RUBY_PLATFORM.match(/linux/)
+              system("xdg-open #{ROOT_PATH}/media/music")
+            else
+              # TODO.
+            end
+          end
         end
       end
     end

@@ -18,6 +18,11 @@ class View < CyberarmEngine::GuiState
         @clock.controller = @clock_controller
       end
 
+      button "Start Full TeleOp", width: 1.0 do
+        @clock_controller = ClockController.new(33.0, ClockController::FULL_TELEOP)
+        @clock.controller = @clock_controller
+      end
+
       button "Start TeleOp Only", width: 1.0 do
         @clock_controller = ClockController.new(41.0, ClockController::TELEOP)
         @clock.controller = @clock_controller

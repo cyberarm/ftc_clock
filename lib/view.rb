@@ -7,41 +7,80 @@ class View < CyberarmEngine::GuiState
     @clock_controller = nil
     @clock.controller = nil
 
-    @menu = stack(width: 350) do
-      button "Start Match", width: 1.0 do
-        @clock_controller = ClockController.new(0, ClockController::FULL_MATCH)
-        @clock.controller = @clock_controller
+    @menu = flow do
+      stack(width: 350, padding: 5) do
+        background 0x55004159
+
+        button "Start Match", width: 1.0 do
+          @clock_controller = ClockController.new(0, ClockController::FULL_MATCH)
+          @clock.controller = @clock_controller
+        end
+
+        button "Start Autonomous Only", width: 1.0, margin_top: 40 do
+          @clock_controller = ClockController.new(0, ClockController::AUTONOMOUS)
+          @clock.controller = @clock_controller
+        end
+
+        button "Start Full TeleOp", width: 1.0, margin_top: 40 do
+          @clock_controller = ClockController.new(33.0, ClockController::FULL_TELEOP)
+          @clock.controller = @clock_controller
+        end
+
+        button "Start TeleOp Only", width: 1.0, margin_top: 10 do
+          @clock_controller = ClockController.new(41.0, ClockController::TELEOP)
+          @clock.controller = @clock_controller
+        end
+
+        button "Start TeleOp Endgame Only", width: 1.0, margin_top: 10 do
+          @clock_controller = ClockController.new(131.0, ClockController::TELEOP_ENDGAME)
+          @clock.controller = @clock_controller
+        end
+
+        button "Abort", width: 1.0, margin_top: 40 do
+          @clock_controller = nil
+          @clock.controller = nil
+        end
+
+        button "Exit", width: 1.0, margin_top: 40, background: Gosu::Color.rgb(100, 0, 0), hover: {background: Gosu::Color.rgb(200, 0, 0)} do
+          window.close
+        end
       end
 
-      button "Start Autonomous Only", width: 1.0 do
-        @clock_controller = ClockController.new(0, ClockController::AUTONOMOUS)
-        @clock.controller = @clock_controller
-      end
+      stack padding_left: 50 do
+        background 0x55004159
 
-      button "Start Full TeleOp", width: 1.0 do
-        @clock_controller = ClockController.new(33.0, ClockController::FULL_TELEOP)
-        @clock.controller = @clock_controller
-      end
+        flow do
+          label "♫ Now playing: "
+          @current_song_label = label "♫ ♫ ♫"
+        end
 
-      button "Start TeleOp Only", width: 1.0 do
-        @clock_controller = ClockController.new(41.0, ClockController::TELEOP)
-        @clock.controller = @clock_controller
-      end
+        flow do
+          button "←" do
+            @jukebox.previous_track
+          end
 
-      button "Start TeleOp Endgame Only", width: 1.0 do
-        @clock_controller = ClockController.new(131.0, ClockController::TELEOP_ENDGAME)
-        @clock.controller = @clock_controller
-      end
+          button "||" do |button|
+            if @jukebox.paused?
+              button.value = "►"
+              @jukebox.play
+            else
+              button.value = "||"
+              @jukebox.pause
+            end
+          end
 
-      button "Abort", width: 1.0 do
-        @clock_controller = nil
-        @clock.controller = nil
-      end
+          button "■" do
+            @jukebox.stop
+          end
 
-      button "Exit", width: 1.0 do
-        window.close
+          button "→" do
+            @jukebox.next_track
+          end
+        end
       end
     end
+
+    @jukebox = Jukebox.new(@current_song_label)
   end
 
   def draw
@@ -56,6 +95,7 @@ class View < CyberarmEngine::GuiState
     @clock.update
     @clock_controller.update if @clock_controller
     @mouse.update
+    @jukebox.update
 
     if @mouse.last_moved < 1.5
       @menu.show unless @menu.visible?

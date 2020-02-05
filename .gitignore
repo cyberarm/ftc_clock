@@ -1,2 +1,5 @@
 /media/*
 !/media/screenshot.png
+/media/music/*
+!/media/music/
+!/media/music/.gitkeep

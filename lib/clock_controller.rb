@@ -1,5 +1,4 @@
 class ClockController
-  SAMPLES = {}
   Event = Struct.new(:event, :trigger_after, :arguments)
 
   include EventHandlers

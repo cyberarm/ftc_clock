@@ -10,8 +10,9 @@ require_relative "lib/clock_controller"
 require_relative "lib/jukebox"
 
 class FtcClock < CyberarmEngine::Engine
+  attr_accessor :redraw_screen
   def initialize
-    super(width: Gosu.screen_width, height: Gosu.screen_height, fullscreen: true, update_interval: 1000.0/24)
+    super(width: Gosu.screen_width, height: Gosu.screen_height, fullscreen: true)
 
     sounds = Dir[ROOT_PATH + "/media/*.*"].each do |sound|
       if File.basename(sound).split(".").last =~ /wav|ogg/
@@ -19,7 +20,12 @@ class FtcClock < CyberarmEngine::Engine
       end
     end
 
+    @redraw_screen = true
     push_state(View)
+  end
+
+  def needs_redraw?
+    @redraw_screen
   end
 end
 

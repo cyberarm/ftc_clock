@@ -2,10 +2,12 @@ class View < CyberarmEngine::GuiState
   def setup
     window.show_cursor = true
 
+    @redraw_screen = true
     @mouse = Mouse.new(window)
     @clock = Clock.new
     @clock_controller = nil
     @clock.controller = nil
+    @last_clock_display_value = @clock.value
 
     @menu = flow do
       stack(width: 350, padding: 5) do
@@ -111,6 +113,7 @@ class View < CyberarmEngine::GuiState
 
   def update
     super
+    window.redraw_screen = @redraw_screen
 
     @clock.update
     @clock_controller.update if @clock_controller
@@ -120,9 +123,16 @@ class View < CyberarmEngine::GuiState
     if @mouse.last_moved < 1.5
       @menu.show unless @menu.visible?
       window.show_cursor = true
+      @redraw_screen = true
     else
       @menu.hide if @menu.visible?
       window.show_cursor = false
+      @redraw_screen = false
+    end
+
+    if @clock.value != @last_clock_display_value
+      @last_clock_display_value = @clock.value
+      @redraw_screen = true
     end
   end
 

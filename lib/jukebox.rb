@@ -48,8 +48,8 @@ class Jukebox
   end
 
   def generate_sfx_period
-    # rand(15..120) * 1000.0
-    rand(5..10) * 1000.0
+    rand(15..120) * 1000.0
+    # rand(5..10) * 1000.0
   end
 
   def toggle_sfx

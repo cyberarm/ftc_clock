@@ -15,4 +15,4 @@ class FtcClock < CyberarmEngine::Engine
   end
 end
 
-FtcClock.new.show
+FtcClock.new.show unless defined?(Ocra)

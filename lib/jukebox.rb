@@ -63,7 +63,7 @@ class Jukebox
       return false unless @order.size > 0
 
       @current_song = @order.first
-      Gosu::Song.new(@order.first).play
+      Gosu::Song.new(@current_song).play
       @order.rotate!(1)
     end
 
@@ -91,7 +91,7 @@ class Jukebox
 
     @order.rotate!(-1)
     @current_song = @order.first
-    Gosu::Song.new(@order.first).play
+    Gosu::Song.new(@current_song).play
 
     @label.value = File.basename(current_track)
     @playing = true
@@ -102,7 +102,7 @@ class Jukebox
 
 
     @current_song = @order.first
-    Gosu::Song.new(@order.first).play
+    Gosu::Song.new(@current_song).play
     @order.rotate!(1)
 
     @label.value = File.basename(current_track)

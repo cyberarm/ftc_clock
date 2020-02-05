@@ -62,7 +62,10 @@ class View < CyberarmEngine::GuiState
           end
 
           button "||" do |button|
-            if @jukebox.paused?
+            if @jukebox.song && @jukebox.song.paused?
+              button.value = "►"
+              @jukebox.play
+            elsif !@jukebox.song
               button.value = "►"
               @jukebox.play
             else

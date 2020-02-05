@@ -12,6 +12,9 @@ class Jukebox
     @order = MUSIC.shuffle
     @now_playing = ""
     @playing = false
+    @song = nil
+    @volume = 1.0
+    @last_check_time = Gosu.milliseconds
 
     @last_sfx_time = Gosu.milliseconds
     @sfx_random_interval = generate_sfx_period
@@ -24,13 +27,14 @@ class Jukebox
     end
   end
 
-  private def song
-    Gosu::Song.current_song
-  end
-
   def update
-    if @playing && !song
-      next_track
+    return unless Gosu.milliseconds - @last_check_time >= 2000.0
+    @last_check_time = Gosu.milliseconds
+
+    @song.volume = @volume if @song
+
+    if @song && !@song.playing? && !@song.paused?
+      next_track if @playing
     end
 
     if @play_sfx && defined?(BEEPS_AND_BOOPS)
@@ -57,13 +61,14 @@ class Jukebox
   end
 
   def play
-    if song && song.paused?
-      song.play
+    if @song && @song.paused?
+      @song.play
     else
       return false unless @order.size > 0
 
       @current_song = @order.first
-      Gosu::Song.new(@current_song).play
+      @song = Gosu::Song.new(@current_song)
+      @song.play
       @order.rotate!(1)
     end
 
@@ -72,16 +77,16 @@ class Jukebox
   end
 
   def pause
-    song.pause if song
     @playing = false
+    @song.pause if @song
   end
 
-  def paused?
-    song ? song.paused? : true
+  def song
+    @song
   end
 
   def stop
-    song.stop if song
+    @song.stop if @song
     @label.value = "♫ ♫ ♫"
     @playing = false
   end
@@ -89,9 +94,11 @@ class Jukebox
   def previous_track
     return false unless @order.size > 0
 
+    @song.stop if @song
     @order.rotate!(-1)
     @current_song = @order.first
-    Gosu::Song.new(@current_song).play
+    @song = Gosu::Song.new(@current_song)
+    @song.play
 
     @label.value = File.basename(current_track)
     @playing = true
@@ -100,9 +107,10 @@ class Jukebox
   def next_track
     return false unless @order.size > 0
 
-
+    @song.stop if @song
     @current_song = @order.first
-    Gosu::Song.new(@current_song).play
+    @song = Gosu::Song.new(@current_song)
+    @song.play
     @order.rotate!(1)
 
     @label.value = File.basename(current_track)

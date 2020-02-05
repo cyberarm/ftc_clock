@@ -33,7 +33,7 @@ class Jukebox
       next_track
     end
 
-    if @play_sfx && defined?(BEEPS_AND_BOOPS) && !@clock.active?
+    if @play_sfx && defined?(BEEPS_AND_BOOPS)
       play_sfx
     end
   end
@@ -43,7 +43,7 @@ class Jukebox
       @last_sfx_time = Gosu.milliseconds
       @sfx_random_interval = generate_sfx_period
 
-      SAMPLES[BEEPS_AND_BOOPS.sample].play
+      SAMPLES[BEEPS_AND_BOOPS.sample].play unless @clock.active?
     end
   end
 

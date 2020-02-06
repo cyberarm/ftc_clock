@@ -52,8 +52,13 @@ class View < CyberarmEngine::GuiState
         background 0x55004159
 
         flow do
-          label "♫ Now playing: "
+          label "♫ Now playing:"
           @current_song_label = label "♫ ♫ ♫"
+        end
+
+        flow do
+          label "Volume:"
+          @current_volume_label = label "100%"
         end
 
         flow do
@@ -82,6 +87,14 @@ class View < CyberarmEngine::GuiState
             @jukebox.next_track
           end
 
+          button "-", margin_left: 20 do
+            @jukebox.lower_volume
+          end
+
+          button "+" do
+            @jukebox.increase_volume
+          end
+
           button "Open Music Library", margin_left: 50 do
             if RUBY_PLATFORM.match(/ming|msys|cygwin/)
               # TODO: windows
@@ -105,7 +118,7 @@ class View < CyberarmEngine::GuiState
       end
     end
 
-    @jukebox = Jukebox.new(@clock, @current_song_label)
+    @jukebox = Jukebox.new(@clock, @current_song_label, @current_volume_label)
   end
 
   def draw

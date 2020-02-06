@@ -5,9 +5,10 @@ class Jukebox
     BEEPS_AND_BOOPS = Dir.glob(ROOT_PATH + "/media/skystone/*.*").freeze
   end
 
-  def initialize(clock, label)
+  def initialize(clock, current_track_label, current_volume_label)
     @clock = clock
-    @label = label
+    @current_track_label = current_track_label
+    @current_volume_label = current_volume_label
 
     @order = MUSIC.shuffle
     @now_playing = ""
@@ -72,7 +73,7 @@ class Jukebox
       @order.rotate!(1)
     end
 
-    @label.value = File.basename(current_track)
+    @current_track_label.value = File.basename(current_track)
     @playing = true
   end
 
@@ -87,7 +88,7 @@ class Jukebox
 
   def stop
     @song.stop if @song
-    @label.value = "♫ ♫ ♫"
+    @current_track_label.value = "♫ ♫ ♫"
     @playing = false
   end
 
@@ -100,7 +101,7 @@ class Jukebox
     @song = Gosu::Song.new(@current_song)
     @song.play
 
-    @label.value = File.basename(current_track)
+    @current_track_label.value = File.basename(current_track)
     @playing = true
   end
 
@@ -113,11 +114,23 @@ class Jukebox
     @song.play
     @order.rotate!(1)
 
-    @label.value = File.basename(current_track)
+    @current_track_label.value = File.basename(current_track)
     @playing = true
   end
 
   def current_track
     @current_song
+  end
+
+  def lower_volume
+    @volume -= 0.1
+    @volume = @volume.clamp(0.1, 1.0)
+    @current_volume_label.value = "#{(@volume * 100).round}%"
+  end
+
+  def increase_volume
+    @volume += 0.1
+    @volume = @volume.clamp(0.1, 1.0)
+    @current_volume_label.value = "#{(@volume * 100).round}%"
   end
 end

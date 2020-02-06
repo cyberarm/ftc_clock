@@ -48,7 +48,10 @@ class Jukebox
       @last_sfx_time = Gosu.milliseconds
       @sfx_random_interval = generate_sfx_period
 
-      SAMPLES[BEEPS_AND_BOOPS.sample].play unless @clock.active?
+      pan = rand(0.49999..5.1111)
+      volume = rand(0.75..1.0)
+      speed = rand(0.5..1.25)
+      SAMPLES[BEEPS_AND_BOOPS.sample].play_pan(pan, volume, speed) unless @clock.active?
     end
   end
 

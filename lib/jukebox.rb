@@ -32,8 +32,6 @@ class Jukebox
     return unless Gosu.milliseconds - @last_check_time >= 2000.0
     @last_check_time = Gosu.milliseconds
 
-    @song.volume = @volume if @song
-
     if @song && !@song.playing? && !@song.paused?
       next_track if @playing
     end
@@ -72,6 +70,7 @@ class Jukebox
 
       @current_song = @order.first
       @song = Gosu::Song.new(@current_song)
+      @song.volume = @volume
       @song.play
       @order.rotate!(1)
     end
@@ -102,6 +101,7 @@ class Jukebox
     @order.rotate!(-1)
     @current_song = @order.first
     @song = Gosu::Song.new(@current_song)
+    @song.volume = @volume
     @song.play
 
     @current_track_label.value = File.basename(current_track)
@@ -114,6 +114,7 @@ class Jukebox
     @song.stop if @song
     @current_song = @order.first
     @song = Gosu::Song.new(@current_song)
+    @song.volume = @volume
     @song.play
     @order.rotate!(1)
 
@@ -128,12 +129,14 @@ class Jukebox
   def lower_volume
     @volume -= 0.1
     @volume = @volume.clamp(0.1, 1.0)
+    @song.volume = @volume if @song
     @current_volume_label.value = "#{(@volume * 100).round}%"
   end
 
   def increase_volume
     @volume += 0.1
     @volume = @volume.clamp(0.1, 1.0)
+    @song.volume = @volume if @song
     @current_volume_label.value = "#{(@volume * 100).round}%"
   end
 end

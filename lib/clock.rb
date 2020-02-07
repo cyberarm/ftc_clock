@@ -47,12 +47,7 @@ class Clock
   end
 
   def clock_time(time_left)
-    minutes = (time_left / 60.0).to_s.split(".").first.to_i
-    if minutes == 0 && (time_left >= 59.4)
-      minutes+=1
-    elsif minutes == 1 && (time_left >= 119.4)
-      minutes+=1
-    end
+    minutes = ((time_left + 0.5) / 60.0).floor
 
     seconds = time_left.round % 60
     seconds = "0#{seconds}" if seconds < 10

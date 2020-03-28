@@ -12,9 +12,11 @@ class ClockController
   AUTONOMOUS = [
     create_event(:change_clock, 0.0, "2:30"),
     create_event(:change_countdown, 0.0, "0:03"),
+    create_event(:change_color, 0.0, :red),
     create_event(:change_display, 0.0, :countdown),
     create_event(:start_countdown, 0.0),
     create_event(:play_sound, 0.0, :autonomous_countdown),
+    create_event(:change_color, 3.0, :white),
     create_event(:change_display, 3.0, :clock),
     create_event(:play_sound, 3.0, :autonomous_start),
     create_event(:change_display, 3.0, :clock),
@@ -25,24 +27,27 @@ class ClockController
   ].freeze
 
   PRE_TELEOP = [
+    create_event(:change_color, 33.0, :orange),
     create_event(:change_countdown, 33.0, "0:08"),
     create_event(:change_display, 33.0, :countdown),
     create_event(:start_countdown, 33.0),
     create_event(:play_sound, 34.5, :teleop_pickup_controllers),
+    create_event(:change_color, 37.0, :red),
     create_event(:play_sound, 38.0, :teleop_countdown),
     create_event(:stop_countdown, 41.0),
   ].freeze
 
   TELEOP_ENDGAME = [
+    create_event(:change_color, 131.0, :white),
     create_event(:change_clock, 131.0, "0:30"),
     create_event(:start_clock, 131.0),
     create_event(:play_sound, 131.0, :end_game),
-    create_event(:play_sound, 158.0, :teleop_countdown),
     create_event(:play_sound, 161.0, :end_match),
     create_event(:stop_clock, 161.0),
   ].freeze
 
   TELEOP = [
+    create_event(:change_color, 41.0, :white),
     create_event(:change_clock, 41.0, "2:00"),
     create_event(:play_sound, 41.0, :teleop_started),
     create_event(:change_display, 41.0, :clock),
@@ -62,6 +67,7 @@ class ClockController
     FULL_TELEOP
   ].flatten.freeze
 
+  attr_reader :display_color
   def initialize(elapsed_time = 0, events = [])
     @events = events.dup
     @last_update = Gosu.milliseconds
@@ -74,6 +80,8 @@ class ClockController
 
     @clock_running = false
     @countdown_running = false
+
+    @display_color = Gosu::Color::WHITE
   end
 
   def update

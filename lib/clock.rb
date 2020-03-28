@@ -25,8 +25,10 @@ class Clock
 
   def update
     if @controller
+      @text.color = @controller.display_color
       @text.text = clock_time(@controller.time_left)
     else
+      @text.color = Gosu::Color::WHITE
       @text.text = "0:00"
     end
 
@@ -51,16 +53,6 @@ class Clock
 
     seconds = time_left.round % 60
     seconds = "0#{seconds}" if seconds < 10
-
-    if time_left < 30.0
-      if @controller.countdown?
-        @text.color = Gosu::Color.rgb(150, 75, 0)
-      else
-        @text.color = Gosu::Color.rgb(150, 0, 0)
-      end
-    else
-      @text.color = Gosu::Color::WHITE
-    end
 
     return "#{minutes}:#{seconds}" if time_left.round.even?
     return "#{minutes}<c=999999>:</c>#{seconds}" if time_left.round.odd?

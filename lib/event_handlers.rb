@@ -29,6 +29,19 @@ module EventHandlers
   def change_display(display)
   end
 
+  def change_color(color)
+    out = case color
+    when :white
+      Gosu::Color::WHITE
+    when :orange
+      Gosu::Color.rgb(150, 75, 0)
+    when :red
+      Gosu::Color.rgb(150, 0, 0)
+    end
+
+    @display_color = out
+  end
+
   private def time_from_string(string)
     split = string.split(":")
     minutes = (split.first.to_i) * 60

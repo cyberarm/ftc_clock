@@ -128,35 +128,4 @@ class ClockController
       return 60 * 2 + 30
     end
   end
-
-  def play_sound(sound)
-    path = nil
-    case sound
-    when :autonomous_countdown
-      path = "media/3-2-1.wav"
-    when :autonomous_start
-      path = "media/charge.wav"
-    when :autonomous_ended
-      path = "media/endauto.wav"
-    when :teleop_pickup_controllers
-      path = "media/Pick_Up_Controllers.wav"
-    when :teleop_countdown
-      path = "media/3-2-1.wav"
-    when :teleop_started
-      path = "media/firebell.wav"
-    when :end_game
-      path = "media/factwhistle.wav"
-    when :end_match
-      path = "media/endmatch.wav"
-    end
-
-    path = "#{ROOT_PATH}/#{path}"
-
-    if path && File.exist?(path)
-      SAMPLES[path] = Gosu::Sample.new(path) unless SAMPLES[path].is_a?(Gosu::Sample)
-      SAMPLES[path].play
-    else
-      warn "WARNING: Sample for #{sound.inspect} could not be found at '#{path}'"
-    end
-  end
 end

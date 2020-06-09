@@ -152,6 +152,12 @@ class View < CyberarmEngine::GuiState
     end
   end
 
+  def button_down(id)
+    super
+
+    @mouse.button_down(id)
+  end
+
   class Mouse
     def initialize(window)
       @window = window
@@ -165,6 +171,13 @@ class View < CyberarmEngine::GuiState
 
       if  @last_position != position
         @last_position = position
+        @last_moved = Gosu.milliseconds
+      end
+    end
+
+    def button_down(id)
+      case id
+      when Gosu::MS_LEFT, Gosu::MS_MIDDLE, Gosu::MS_RIGHT
         @last_moved = Gosu.milliseconds
       end
     end

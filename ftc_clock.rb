@@ -13,7 +13,7 @@ require_relative "lib/event_handlers"
 require_relative "lib/clock_controller"
 require_relative "lib/jukebox"
 
-class FtcClock < CyberarmEngine::Engine
+class FtcClock < CyberarmEngine::Window
   attr_accessor :redraw_screen
   def initialize
     super(width: Gosu.screen_width, height: Gosu.screen_height, fullscreen: true)

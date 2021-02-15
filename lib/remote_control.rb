@@ -4,9 +4,14 @@ rescue LoadError
   require "cyberarm_engine"
 end
 
-require "drb/drb"
+require "socket"
 
-require_relative "remote_api"
+require_relative "net/client"
+require_relative "net/connection"
+require_relative "net/packet_handler"
+require_relative "net/packet"
+
+require_relative "logger"
 require_relative "theme"
 
 class RemoteControlWindow < CyberarmEngine::Window
@@ -20,22 +25,35 @@ class RemoteControlWindow < CyberarmEngine::Window
 
   class View < CyberarmEngine::GuiState
     def setup
-      DRb.start_service
-
-      @remote_api = DRbObject.new_with_uri(RemoteAPI::URI)
-
       theme(THEME)
+
+      @connection = ClockNet::Connection.new(proxy_object: self)
+      @connection.connect
+
+      at_exit do
+        @connection&.close
+      end
 
       background 0xff_008000
       banner "Hello World"
 
       button "Start Match", text_size: 48 do
-        @remote_api.start_clock(:full_match)
+        start_clock(:full_match)
       end
 
-      button "Change Title" do
-        @remote_api.set_title("Hello World!")
+      button "Abort Clock" do
+        @connection.puts(ClockNet::PacketHandler.packet_abort_clock)
       end
+
+      @title = edit_line "FIRST Tech Challenge"
+
+      button "Change Title" do
+        @connection.puts(ClockNet::PacketHandler.packet_set_clock_title(@title.value.strip))
+      end
+    end
+
+    def start_clock(mode)
+      @connection.puts(ClockNet::PacketHandler.packet_start_clock(mode.to_s))
     end
   end
 end

@@ -1,5 +1,5 @@
 class View < CyberarmEngine::GuiState
-  attr_accessor :clock_controller, :clock
+  attr_reader :clock
 
   def setup
     window.show_cursor = true
@@ -7,15 +7,8 @@ class View < CyberarmEngine::GuiState
     @redraw_screen = true
     @mouse = Mouse.new(window)
     @clock = Clock.new
-    @clock_controller = nil
     @clock.controller = nil
     @last_clock_display_value = @clock.value
-
-    @remote_api = RemoteAPI.new(self)
-
-    if DUAL_SCREEN_MODE
-      DRb.start_service(RemoteAPI::URI, @remote_api)
-    end
 
     theme(THEME)
 
@@ -24,27 +17,27 @@ class View < CyberarmEngine::GuiState
         background 0x55004159
 
         button "Start Match", width: 1.0 do
-          @remote_api.start_clock(:full_match)
+          @clock_proxy.start_clock(:full_match)
         end
 
         button "Start Autonomous Only", width: 1.0, margin_top: 40 do
-          @remote_api.start_clock(:autonomous)
+          @clock_proxy.start_clock(:autonomous)
         end
 
         button "Start Full TeleOp", width: 1.0, margin_top: 40 do
-          @remote_api.start_clock(:full_teleop)
+          @clock_proxy.start_clock(:full_teleop)
         end
 
         button "Start TeleOp Only", width: 1.0, margin_top: 10 do
-          @remote_api.start_clock(:teleop_only)
+          @clock_proxy.start_clock(:teleop_only)
         end
 
         button "Start TeleOp Endgame Only", width: 1.0, margin_top: 10 do
-          @remote_api.start_clock(:endgame_only)
+          @clock_proxy.start_clock(:endgame_only)
         end
 
         button "Abort", width: 1.0, margin_top: 40 do
-          @remote_api.abort_clock
+          @clock_proxy.abort_clock
         end
 
         button "Exit", width: 1.0, margin_top: 40, background: Gosu::Color.rgb(100, 0, 0), hover: {background: Gosu::Color.rgb(200, 0, 0)} do
@@ -123,6 +116,13 @@ class View < CyberarmEngine::GuiState
     end
 
     @jukebox = Jukebox.new(@clock, @current_song_label, @current_volume_label)
+
+    @clock_proxy = ClockProxy.new(@clock, @jukebox)
+
+    if DUAL_SCREEN_MODE
+      @server = ClockNet::Server.new(proxy_object: @clock_proxy)
+      @server.start
+    end
   end
 
   def draw
@@ -136,7 +136,6 @@ class View < CyberarmEngine::GuiState
     window.redraw_screen = @redraw_screen
 
     @clock.update
-    @clock_controller.update if @clock_controller
     @mouse.update
     @jukebox.update
 

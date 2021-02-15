@@ -36,6 +36,8 @@ class Clock
 
     @text.x = $window.width / 2 - @text.textobject.text_width("0:00") / 2
     @text.y = $window.height / 2 - @text.height / 2
+
+    @controller&.update
   end
 
   def active?

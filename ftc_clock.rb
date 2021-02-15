@@ -14,10 +14,17 @@ require_relative "lib/event_handlers"
 require_relative "lib/clock_controller"
 require_relative "lib/jukebox"
 require_relative "lib/theme"
-require_relative "lib/remote_api"
+require_relative "lib/clock_proxy"
+require_relative "lib/logger"
 
 if DUAL_SCREEN_MODE
-  require "drb/drb"
+  require "socket"
+
+  require_relative "lib/net/client"
+  require_relative "lib/net/connection"
+  require_relative "lib/net/packet_handler"
+  require_relative "lib/net/packet"
+  require_relative "lib/net/server"
 end
 
 class FtcClock < CyberarmEngine::Window

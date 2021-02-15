@@ -3,4 +3,6 @@
 /media/music/*
 !/media/music/
 !/media/music/.gitkeep
+!/media/icons/
+!/media/icons/*
 dual_screen_mode.dat

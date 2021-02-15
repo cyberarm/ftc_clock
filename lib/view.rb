@@ -1,4 +1,6 @@
 class View < CyberarmEngine::GuiState
+  attr_accessor :clock_controller, :clock
+
   def setup
     window.show_cursor = true
 
@@ -9,38 +11,40 @@ class View < CyberarmEngine::GuiState
     @clock.controller = nil
     @last_clock_display_value = @clock.value
 
-    @menu = flow do
-      stack(width: 350, padding: 5) do
+    @remote_api = RemoteAPI.new(self)
+
+    if DUAL_SCREEN_MODE
+      DRb.start_service(RemoteAPI::URI, @remote_api)
+    end
+
+    theme(THEME)
+
+    @menu_container = flow do
+      stack(width: 470, padding: 5) do
         background 0x55004159
 
         button "Start Match", width: 1.0 do
-          @clock_controller = ClockController.new(0, ClockController::FULL_MATCH)
-          @clock.controller = @clock_controller
+          @remote_api.start_clock(:full_match)
         end
 
         button "Start Autonomous Only", width: 1.0, margin_top: 40 do
-          @clock_controller = ClockController.new(0, ClockController::AUTONOMOUS)
-          @clock.controller = @clock_controller
+          @remote_api.start_clock(:autonomous)
         end
 
         button "Start Full TeleOp", width: 1.0, margin_top: 40 do
-          @clock_controller = ClockController.new(33.0, ClockController::FULL_TELEOP)
-          @clock.controller = @clock_controller
+          @remote_api.start_clock(:full_teleop)
         end
 
         button "Start TeleOp Only", width: 1.0, margin_top: 10 do
-          @clock_controller = ClockController.new(41.0, ClockController::TELEOP)
-          @clock.controller = @clock_controller
+          @remote_api.start_clock(:teleop_only)
         end
 
         button "Start TeleOp Endgame Only", width: 1.0, margin_top: 10 do
-          @clock_controller = ClockController.new(131.0, ClockController::TELEOP_ENDGAME)
-          @clock.controller = @clock_controller
+          @remote_api.start_clock(:endgame_only)
         end
 
         button "Abort", width: 1.0, margin_top: 40 do
-          @clock_controller = nil
-          @clock.controller = nil
+          @remote_api.abort_clock
         end
 
         button "Exit", width: 1.0, margin_top: 40, background: Gosu::Color.rgb(100, 0, 0), hover: {background: Gosu::Color.rgb(200, 0, 0)} do
@@ -62,42 +66,42 @@ class View < CyberarmEngine::GuiState
         end
 
         flow do
-          button "←" do
+          button get_image("#{ROOT_PATH}/media/icons/previous.png") do
             @jukebox.previous_track
           end
 
-          button "||" do |button|
+          button get_image("#{ROOT_PATH}/media/icons/pause.png") do |button|
             if @jukebox.song && @jukebox.song.paused?
-              button.value = "►"
+              button.value = get_image("#{ROOT_PATH}/media/icons/right.png")
               @jukebox.play
             elsif !@jukebox.song
-              button.value = "►"
+              button.value = get_image("#{ROOT_PATH}/media/icons/right.png")
               @jukebox.play
             else
-              button.value = "||"
+              button.value = get_image("#{ROOT_PATH}/media/icons/pause.png")
               @jukebox.pause
             end
           end
 
-          button "■" do
+          button get_image("#{ROOT_PATH}/media/icons/stop.png") do
             @jukebox.stop
           end
 
-          button "→" do
+          button get_image("#{ROOT_PATH}/media/icons/next.png") do
             @jukebox.next_track
           end
 
-          button "-", margin_left: 20 do
+          button get_image("#{ROOT_PATH}/media/icons/minus.png"), margin_left: 20 do
             @jukebox.lower_volume
           end
 
-          button "+" do
+          button get_image("#{ROOT_PATH}/media/icons/plus.png") do
             @jukebox.increase_volume
           end
 
           button "Open Music Library", margin_left: 50 do
             if RUBY_PLATFORM.match(/ming|msys|cygwin/)
-              # TODO: windows
+              system("explorer #{ROOT_PATH}/media/music")
             elsif RUBY_PLATFORM.match(/linux/)
               system("xdg-open #{ROOT_PATH}/media/music")
             else
@@ -105,13 +109,13 @@ class View < CyberarmEngine::GuiState
             end
           end
 
-          button "SFX: ♪", margin_left: 50 do |button|
+          button get_image("#{ROOT_PATH}/media/icons/musicOn.png"), margin_left: 50, tip: "Toggle Sound Effects" do |button|
             boolean = @jukebox.toggle_sfx
 
             if boolean
-              button.value = "SFX: ♪"
+              button.value = get_image("#{ROOT_PATH}/media/icons/musicOn.png")
             else
-              button.value = "SFX: Off"
+              button.value = get_image("#{ROOT_PATH}/media/icons/musicOff.png")
             end
           end
         end
@@ -122,9 +126,9 @@ class View < CyberarmEngine::GuiState
   end
 
   def draw
-    super
-
     @clock.draw
+
+    super
   end
 
   def update
@@ -136,14 +140,18 @@ class View < CyberarmEngine::GuiState
     @mouse.update
     @jukebox.update
 
-    if @mouse.last_moved < 1.5
-      @menu.show unless @menu.visible?
-      window.show_cursor = true
-      @redraw_screen = true
+    if DUAL_SCREEN_MODE
+      @menu_container.hide
     else
-      @menu.hide if @menu.visible?
-      window.show_cursor = false
-      @redraw_screen = false
+      if @mouse.last_moved < 1.5
+        @menu_container.show unless @menu_container.visible?
+        window.show_cursor = true
+        @redraw_screen = true
+      else
+        @menu_container.hide if @menu_container.visible?
+        window.show_cursor = false
+        @redraw_screen = false
+      end
     end
 
     if @clock.value != @last_clock_display_value

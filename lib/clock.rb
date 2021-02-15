@@ -2,6 +2,8 @@ class Clock
   CLOCK_SIZE = Gosu.screen_height
   TITLE_SIZE = 128
 
+  attr_reader :title
+
   def initialize
     @title = CyberarmEngine::Text.new(ARGV.size > 0 ? ARGV.first : "FIRST TECH CHALLENGE", size: TITLE_SIZE, text_shadow: true, y: 10, color: Gosu::Color::GRAY)
     @title.x = $window.width / 2 - @title.width / 2

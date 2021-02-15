@@ -2,10 +2,9 @@
 A simple match clock for practice purposes
 
 ## Usage
-* Install Ruby 2.4
-* Install libgosu
+* Install Ruby 2.7+ - 3.0
 
-`$ gem install gosu`
+`$ bundle install`
 
 * And run it:
 

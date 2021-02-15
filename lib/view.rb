@@ -115,7 +115,7 @@ class View < CyberarmEngine::GuiState
       end
     end
 
-    @jukebox = Jukebox.new(@clock, @current_song_label, @current_volume_label)
+    @jukebox = Jukebox.new(@clock)
 
     @clock_proxy = ClockProxy.new(@clock, @jukebox)
 

@@ -1,7 +1,7 @@
 class ClockNet
   class Connection
     TAG = "ClockNet|Connection"
-    attr_reader :client
+    attr_reader :hostname, :port, :client, :proxy_object
 
     def initialize(hostname: "localhost", port: 4567, proxy_object:)
       @hostname = hostname

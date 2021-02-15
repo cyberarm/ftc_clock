@@ -2,6 +2,12 @@ class ClockProxy
   def initialize(clock, jukebox)
     @clock = clock
     @jukebox = jukebox
+
+    @callbacks = {}
+  end
+
+  def register(callback, method)
+    @callbacks[callback] = method
   end
 
   def start_clock(mode)
@@ -48,13 +54,35 @@ class ClockProxy
   end
 
   def jukebox_play
+    @jukebox.play
   end
 
   def jukebox_pause
+    @jukebox.pause
   end
 
-  def jukebox_sound_effects(boolean)
-    @jukebox.toggle_sfx(boolean)
+  def jukebox_set_volume(float)
+    @jukebox.set_volume(float)
+  end
+
+  def jukebox_volume
+    @jukebox.volume
+  end
+
+  def jukebox_current_track
+    @jukebox.now_playing
+  end
+
+  def jukebox_set_sound_effects(boolean)
+    @jukebox.set_sfx(boolean)
+  end
+
+  def jukebox_volume_changed(float)
+    @callbacks[:volume_changed]&.call(float)
+  end
+
+  def jukebox_track_changed(name)
+    @callbacks[:track_changed]&.call(name)
   end
 
   def shutdown!

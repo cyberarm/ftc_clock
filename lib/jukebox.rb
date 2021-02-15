@@ -5,10 +5,10 @@ class Jukebox
     BEEPS_AND_BOOPS = Dir.glob(ROOT_PATH + "/media/skystone/*.*").freeze
   end
 
-  def initialize(clock, current_track_label, current_volume_label)
+  attr_reader :volume, :now_playing
+
+  def initialize(clock)
     @clock = clock
-    @current_track_label = current_track_label
-    @current_volume_label = current_volume_label
 
     @order = MUSIC.shuffle
     @now_playing = ""
@@ -54,12 +54,12 @@ class Jukebox
   end
 
   def generate_sfx_period
-    rand(15..120) * 1000.0
+     rand(15..120) * 1000.0
     # rand(5..10) * 1000.0
   end
 
-  def toggle_sfx
-    @play_sfx = !@play_sfx
+  def set_sfx(boolean)
+    @play_sfx = boolean
   end
 
   def play
@@ -72,10 +72,10 @@ class Jukebox
       @song = Gosu::Song.new(@current_song)
       @song.volume = @volume
       @song.play
+      @now_playing = File.basename(@current_song)
       @order.rotate!(1)
     end
 
-    @current_track_label.value = File.basename(current_track)
     @playing = true
   end
 
@@ -90,8 +90,8 @@ class Jukebox
 
   def stop
     @song.stop if @song
-    @current_track_label.value = "♫ ♫ ♫"
     @playing = false
+    @now_playing = ""
   end
 
   def previous_track
@@ -104,8 +104,8 @@ class Jukebox
     @song.volume = @volume
     @song.play
 
-    @current_track_label.value = File.basename(current_track)
     @playing = true
+    @now_playing = File.basename(@current_song)
   end
 
   def next_track
@@ -118,25 +118,17 @@ class Jukebox
     @song.play
     @order.rotate!(1)
 
-    @current_track_label.value = File.basename(current_track)
     @playing = true
+    @now_playing = File.basename(@current_song)
   end
 
   def current_track
     @current_song
   end
 
-  def lower_volume
-    @volume -= 0.1
+  def set_volume(float)
+    @volume = float
     @volume = @volume.clamp(0.1, 1.0)
     @song.volume = @volume if @song
-    @current_volume_label.value = "#{(@volume * 100).round}%"
-  end
-
-  def increase_volume
-    @volume += 0.1
-    @volume = @volume.clamp(0.1, 1.0)
-    @song.volume = @volume if @song
-    @current_volume_label.value = "#{(@volume * 100).round}%"
   end
 end

@@ -22,18 +22,17 @@ class ClockNet
 
       jukebox_previous_track: 30,
       jukebox_next_track: 31,
-      juke_box_stop: 32,
-      juke_box_play: 33,
-      juke_box_pause: 34,
-      juke_box_get_sound_effects: 35,
-      juke_box_set_sound_effects: 36,
-      juke_box_sound_effects: 37,
-
-      juke_box_set_volume: 37,
-      juke_box_get_volume: 38,
-      juke_box_volume: 39,
-      jukebox_get_song_name: 40,
-      jukebox_song_name: 41
+      jukebox_stop: 32,
+      jukebox_play: 33,
+      jukebox_pause: 34,
+      jukebox_set_volume: 35,
+      jukebox_get_volume: 36,
+      jukebox_volume: 37,
+      jukebox_get_current_track: 38,
+      jukebox_current_track: 39,
+      jukebox_get_sound_effects: 40,
+      jukebox_set_sound_effects: 41,
+      jukebox_sound_effects: 42,
     }
 
     def self.from_stream(message)

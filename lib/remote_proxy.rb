@@ -1,6 +1,12 @@
 class RemoteProxy
   def initialize(window)
     @window = window
+
+    @callbacks = {}
+  end
+
+  def register(callback, method)
+    @callbacks[callback] = method
   end
 
   def start_clock(mode)
@@ -31,6 +37,14 @@ class RemoteProxy
   end
 
   def jukebox_sound_effects(boolean)
+  end
+
+  def volume_changed(float)
+    @callbacks[:volume_changed]&.call(float)
+  end
+
+  def track_changed(name)
+    @callbacks[:track_changed]&.call(name)
   end
 
   def shutdown!

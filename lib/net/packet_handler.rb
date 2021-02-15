@@ -36,6 +36,24 @@ class ClockNet
         handle_set_clock_title(packet)
       when :clock_title
         handle_clock_title(packet)
+      when :jukebox_previous_track
+        handle_jukebox_previous_track(packet)
+      when :jukebox_next_track
+        handle_jukebox_next_track(packet)
+      when :jukebox_play
+        handle_jukebox_play(packet)
+      when :jukebox_pause
+        handle_jukebox_pause(packet)
+      when :jukebox_stop
+        handle_jukebox_stop(packet)
+      when :jukebox_set_volume
+        handle_jukebox_set_volume(packet)
+      when :jukebox_volume
+        handle_jukebox_volume(packet)
+      when :jukebox_set_sound_effects
+        handle_jukebox_set_sound_effects(packet)
+      when :jukebox_current_track
+        handle_jukebox_current_track(packet)
       when :shutdown
         handle_shutdown(packet)
       else
@@ -83,10 +101,93 @@ class ClockNet
       end
     end
 
+    def handle_jukebox_previous_track(packet)
+      unless @host_is_a_connection
+        @proxy_object.jukebox_previous_track
+
+        $window.server.active_client.puts(PacketHandler.packet_jukebox_current_track(@proxy_object.jukebox_current_track))
+      end
+    end
+
+    def handle_jukebox_next_track(packet)
+      unless @host_is_a_connection
+        @proxy_object.jukebox_next_track
+
+        $window.server.active_client.puts(PacketHandler.packet_jukebox_current_track(@proxy_object.jukebox_current_track))
+      end
+    end
+
+    def handle_jukebox_play(packet)
+      unless @host_is_a_connection
+        @proxy_object.jukebox_play
+
+        $window.server.active_client.puts(PacketHandler.packet_jukebox_current_track(@proxy_object.jukebox_current_track))
+      end
+    end
+
+    def handle_jukebox_pause(packet)
+      unless @host_is_a_connection
+        @proxy_object.jukebox_pause
+
+        $window.server.active_client.puts(PacketHandler.packet_jukebox_current_track(@proxy_object.jukebox_current_track))
+      end
+    end
+
+    def handle_jukebox_stop(packet)
+      unless @host_is_a_connection
+        @proxy_object.jukebox_stop
+
+        $window.server.active_client.puts(PacketHandler.packet_jukebox_current_track(@proxy_object.jukebox_current_track))
+      end
+    end
+
+    def handle_jukebox_set_volume(packet)
+      unless @host_is_a_connection
+        float = packet.body.to_f
+        float = float.clamp(0.0, 1.0)
+
+        @proxy_object.jukebox_set_volume(float)
+
+        float = @proxy_object.jukebox_volume
+        $window.server.active_client.puts(PacketHandler.packet_jukebox_volume(float))
+      end
+    end
+
+    def handle_jukebox_get_volume(packet)
+      unless @host_is_a_connection
+        float = @proxy_object.jukebox_volume
+
+        $window.server.active_client.puts(PacketHandler.packet_jukebox_volume(float))
+      end
+    end
+
+    def handle_jukebox_volume(packet)
+      if @host_is_a_connection
+        float = packet.body.to_f
+
+        @proxy_object.volume_changed(float)
+      end
+    end
+
+    def handle_jukebox_set_sound_effects(packet)
+      unless @host_is_a_connection
+        boolean = packet.body == "true"
+
+        @proxy_object.jukebox_set_sound_effects(boolean)
+      end
+    end
+
+    def handle_jukebox_current_track(packet)
+      if @host_is_a_connection
+        @proxy_object.track_changed(packet.body)
+      end
+    end
+
     def handle_shutdown(packet)
       unless @host_is_a_connection
         # $window.server.close
         # $window.close
+        Gosu::Song.current_song&.stop
         exit
       end
     end
@@ -121,6 +222,46 @@ class ClockNet
 
     def self.packet_clock_title(string)
       Packet.create(Packet::PACKET_TYPES[:clock_title], string.to_s)
+    end
+
+    def self.packet_jukebox_previous_track
+      Packet.create(Packet::PACKET_TYPES[:jukebox_previous_track], "")
+    end
+
+    def self.packet_jukebox_next_track
+      Packet.create(Packet::PACKET_TYPES[:jukebox_next_track], "")
+    end
+
+    def self.packet_jukebox_play
+      Packet.create(Packet::PACKET_TYPES[:jukebox_play], "")
+    end
+
+    def self.packet_jukebox_pause
+      Packet.create(Packet::PACKET_TYPES[:jukebox_pause], "")
+    end
+
+    def self.packet_jukebox_stop
+      Packet.create(Packet::PACKET_TYPES[:jukebox_stop], "")
+    end
+
+    def self.packet_jukebox_set_volume(float)
+      Packet.create(Packet::PACKET_TYPES[:jukebox_set_volume], float.to_s)
+    end
+
+    def self.packet_jukebox_get_volume
+      Packet.create(Packet::PACKET_TYPES[:jukebox_get_volume], "")
+    end
+
+    def self.packet_jukebox_volume(float)
+      Packet.create(Packet::PACKET_TYPES[:jukebox_volume], float.to_s)
+    end
+
+    def self.packet_jukebox_set_sound_effects(boolean)
+      Packet.create(Packet::PACKET_TYPES[:jukebox_set_sound_effects], boolean.to_s)
+    end
+
+    def self.packet_jukebox_current_track(name)
+      Packet.create(Packet::PACKET_TYPES[:jukebox_current_track], name)
     end
 
     def self.packet_shutdown

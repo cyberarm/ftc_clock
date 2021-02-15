@@ -34,6 +34,10 @@ class ClockNet
         handle_get_clock_title(packet)
       when :set_clock_title
         handle_set_clock_title(packet)
+      when :clock_title
+        handle_clock_title(packet)
+      when :shutdown
+        handle_shutdown(packet)
       else
         log.d(TAG, "No hand off available for packet type: #{packet.type}")
       end
@@ -66,6 +70,27 @@ class ClockNet
       end
     end
 
+    def handle_set_clock_title(packet)
+      unless @host_is_a_connection
+        title = packet.body
+        @proxy_object.set_clock_title(title)
+      end
+    end
+
+    def handle_get_clock_title(packet)
+      unless @host_is_a_connection
+        $window.server.active_client.puts(Packet.clock_title(@proxy_object.clock.title))
+      end
+    end
+
+    def handle_shutdown(packet)
+      unless @host_is_a_connection
+        # $window.server.close
+        # $window.close
+        exit
+      end
+    end
+
     def self.packet_handshake(client_uuid)
       Packet.create(Packet::PACKET_TYPES[:handshake], client_uuid)
     end
@@ -83,7 +108,7 @@ class ClockNet
     end
 
     def self.packet_abort_clock
-      Packet.create(Packet::PACKET_TYPES[:abort_clock])
+      Packet.create(Packet::PACKET_TYPES[:abort_clock], "")
     end
 
     def self.packet_set_clock_title(string)
@@ -91,11 +116,15 @@ class ClockNet
     end
 
     def self.packet_get_clock_title
-      Packet.create(Packet::PACKET_TYPES[:get_clock_title])
+      Packet.create(Packet::PACKET_TYPES[:get_clock_title], "")
     end
 
     def self.packet_clock_title(string)
       Packet.create(Packet::PACKET_TYPES[:clock_title], string.to_s)
+    end
+
+    def self.packet_shutdown
+      Packet.create(Packet::PACKET_TYPES[:shutdown], "")
     end
   end
 end

@@ -5,7 +5,7 @@ rescue LoadError
 end
 
 ROOT_PATH = File.expand_path(__dir__)
-DUAL_SCREEN_MODE = ARGV.join.include?("--dual-screen-mode")
+REMOTE_CONTROL_MODE = ARGV.join.include?("--remote-control")
 SAMPLES = {}
 
 require_relative "lib/view"
@@ -17,7 +17,7 @@ require_relative "lib/theme"
 require_relative "lib/clock_proxy"
 require_relative "lib/logger"
 
-if DUAL_SCREEN_MODE
+if REMOTE_CONTROL_MODE
   require "socket"
 
   require_relative "lib/net/client"
@@ -28,15 +28,16 @@ if DUAL_SCREEN_MODE
 end
 
 class FtcClock < CyberarmEngine::Window
-  attr_accessor :redraw_screen
+  attr_accessor :redraw_screen, :server
+
   def initialize
-    if DUAL_SCREEN_MODE
-      super(width: Gosu.screen_width * 0.9, height: Gosu.screen_height * 0.8, fullscreen: false, resizable: true)
+    if REMOTE_CONTROL_MODE
+      super(width: (Gosu.screen_width * 0.9).to_i, height: (Gosu.screen_height * 0.8).to_i, fullscreen: false, resizable: true)
     else
       super(width: Gosu.screen_width, height: Gosu.screen_height, fullscreen: true)
     end
 
-    sounds = Dir[ROOT_PATH + "/media/*.*"].each do |sound|
+    Dir[ROOT_PATH + "/media/*.*"].each do |sound|
       if File.basename(sound).split(".").last =~ /wav|ogg/
         SAMPLES[sound] = Gosu::Sample.new(sound)
       end

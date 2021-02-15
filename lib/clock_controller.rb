@@ -42,6 +42,7 @@ class ClockController
     create_event(:change_clock, 131.0, "0:30"),
     create_event(:start_clock, 131.0),
     create_event(:play_sound, 131.0, :end_game),
+    create_event(:play_sound, 158.0, :autonomous_countdown),
     create_event(:play_sound, 161.0, :end_match),
     create_event(:stop_clock, 161.0),
   ].freeze

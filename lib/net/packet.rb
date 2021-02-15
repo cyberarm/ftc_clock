@@ -11,6 +11,7 @@ class ClockNet
       handshake: 0,
       heartbeat: 1,
       error: 2,
+      shutdown: 3,
 
       start_clock: 10,
       abort_clock: 11,

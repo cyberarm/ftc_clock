@@ -8,7 +8,7 @@ A simple match clock for practice purposes
 
 * And run it:
 
-`$ ruby ftc_clock.rb "Optional Clock Title"`
+`$ ruby ftc_clock.rb`
 
 ## Sounds
 Add sounds to /media for the 5 main match sounds.

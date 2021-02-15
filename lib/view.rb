@@ -119,9 +119,10 @@ class View < CyberarmEngine::GuiState
 
     @clock_proxy = ClockProxy.new(@clock, @jukebox)
 
-    if DUAL_SCREEN_MODE
+    if REMOTE_CONTROL_MODE
       @server = ClockNet::Server.new(proxy_object: @clock_proxy)
       @server.start
+      window.server = @server
     end
   end
 
@@ -139,7 +140,7 @@ class View < CyberarmEngine::GuiState
     @mouse.update
     @jukebox.update
 
-    if DUAL_SCREEN_MODE
+    if REMOTE_CONTROL_MODE
       @menu_container.hide
     else
       if @mouse.last_moved < 1.5

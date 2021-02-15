@@ -1,6 +1,7 @@
 class ClockNet
   class Logger
     def printer(message)
+      # return
       puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S %Z")} #{message}"
     end
 

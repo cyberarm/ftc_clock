@@ -118,6 +118,10 @@ class ClockNet
       end
     end
 
+    def close
+      @socket.close
+    end
+
     private def update_stats
       if @active_client
         # NOTE: Sent and Received are reversed for Server stats

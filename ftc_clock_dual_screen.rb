@@ -6,10 +6,8 @@ pid = Process.spawn(
   RbConfig.ruby,
   "#{File.expand_path(__dir__)}/ftc_clock.rb",
   "FIRST TECH CHALLENGE",
-  "--dual-screen-mode"
+  "--remote-control"
 )
 
-sleep 5
-
-RemoteControlWindow.new.show
+RemoteControlWindow.new(width: 1000, height: 600, resizable: true).show
 Process.wait(pid)

@@ -27,6 +27,7 @@ class ClockProxy
 
   def set_clock_title(string)
     @clock.title.text = string.to_s
+    pp string
     @clock.title.x = $window.width / 2 - @clock.title.width / 2
   end
 

@@ -5,7 +5,7 @@ class Clock
   attr_reader :title
 
   def initialize
-    @title = CyberarmEngine::Text.new(ARGV.size > 0 ? ARGV.first : "FIRST TECH CHALLENGE", size: TITLE_SIZE, text_shadow: true, y: 10, color: Gosu::Color::GRAY)
+    @title = CyberarmEngine::Text.new("FIRST TECH CHALLENGE", size: TITLE_SIZE, text_shadow: true, y: 10, color: Gosu::Color::GRAY)
     @title.x = $window.width / 2 - @title.width / 2
 
     @text = CyberarmEngine::Text.new(":1234567890", size: CLOCK_SIZE, text_shadow: true, shadow_size: 2, shadow_color: Gosu::Color::GRAY)
@@ -44,7 +44,7 @@ class Clock
     if @controller
       @controller.clock? || @controller.countdown?
     else
-      return false
+      false
     end
   end
 

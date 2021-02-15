@@ -16,31 +16,33 @@ class View < CyberarmEngine::GuiState
       stack(width: 470, padding: 5) do
         background 0x55004159
 
-        button "Start Match", width: 1.0 do
+        title "Match", width: 1.0, text_align: :center
+        button "Start Match", width: 1.0, margin_bottom: 50 do
           @clock_proxy.start_clock(:full_match)
         end
 
-        button "Start Autonomous Only", width: 1.0, margin_top: 40 do
+        title "Practice", width: 1.0, text_align: :center
+        button "Autonomous", width: 1.0 do
           @clock_proxy.start_clock(:autonomous)
         end
 
-        button "Start Full TeleOp", width: 1.0, margin_top: 40 do
+        button "TeleOp with Countdown", width: 1.0 do
           @clock_proxy.start_clock(:full_teleop)
         end
 
-        button "Start TeleOp Only", width: 1.0, margin_top: 10 do
+        button "TeleOp", width: 1.0 do
           @clock_proxy.start_clock(:teleop_only)
         end
 
-        button "Start TeleOp Endgame Only", width: 1.0, margin_top: 10 do
+        button "TeleOp Endgame", width: 1.0 do
           @clock_proxy.start_clock(:endgame_only)
         end
 
-        button "Abort", width: 1.0, margin_top: 40 do
+        button "Abort Clock", width: 1.0, margin_top: 50 do
           @clock_proxy.abort_clock
         end
 
-        button "Exit", width: 1.0, margin_top: 40, background: Gosu::Color.rgb(100, 0, 0), hover: {background: Gosu::Color.rgb(200, 0, 0)} do
+        button "Shutdown", width: 1.0, **DANGEROUS_BUTTON do
           window.close
         end
       end
@@ -85,11 +87,11 @@ class View < CyberarmEngine::GuiState
           end
 
           button get_image("#{ROOT_PATH}/media/icons/minus.png"), margin_left: 20 do
-            @jukebox.lower_volume
+            @jukebox.set_volume(@jukebox.volume - 0.1)
           end
 
           button get_image("#{ROOT_PATH}/media/icons/plus.png") do
-            @jukebox.increase_volume
+            @jukebox.set_volume(@jukebox.volume + 0.1)
           end
 
           button "Open Music Library", margin_left: 50 do
@@ -103,7 +105,7 @@ class View < CyberarmEngine::GuiState
           end
 
           button get_image("#{ROOT_PATH}/media/icons/musicOn.png"), margin_left: 50, tip: "Toggle Sound Effects" do |button|
-            boolean = @jukebox.toggle_sfx
+            boolean = @jukebox.set_sfx(!@jukebox.play_sfx?)
 
             if boolean
               button.value = get_image("#{ROOT_PATH}/media/icons/musicOn.png")
@@ -158,12 +160,31 @@ class View < CyberarmEngine::GuiState
       @last_clock_display_value = @clock.value
       @redraw_screen = true
     end
+
+    if @last_track_name != @jukebox.current_track
+      track_changed(@jukebox.current_track)
+    end
+
+    if @last_volume != @jukebox.volume
+      volume_changed(@jukebox.volume)
+    end
+
+    @last_track_name = @jukebox.current_track
+    @last_volume = @jukebox.volume
   end
 
   def button_down(id)
     super
 
     @mouse.button_down(id)
+  end
+
+  def track_changed(name)
+    @current_song_label.value = File.basename(name)
+  end
+
+  def volume_changed(float)
+    @current_volume_label.value = "#{(float.round(1) * 100.0).round}%"
   end
 
   class Mouse

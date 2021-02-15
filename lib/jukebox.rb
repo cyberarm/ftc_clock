@@ -62,6 +62,10 @@ class Jukebox
     @play_sfx = boolean
   end
 
+  def play_sfx?
+    @play_sfx
+  end
+
   def play
     if @song && @song.paused?
       @song.play

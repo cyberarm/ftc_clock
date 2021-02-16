@@ -17,6 +17,7 @@ require_relative "lib/theme"
 require_relative "lib/clock_proxy"
 require_relative "lib/logger"
 require_relative "lib/particle_emitter"
+require_relative "lib/randomizer"
 
 if REMOTE_CONTROL_MODE
   require "socket"

@@ -11,15 +11,15 @@ class View < CyberarmEngine::GuiState
     @last_clock_display_value = @clock.value
 
     @particle_emitters = [
-      ParticleEmitter.new,
+      ParticleEmitter.new
     ]
 
     @last_clock_state = @clock.active?
 
     theme(THEME)
 
-    @menu_container = flow do
-      stack(width: 470, padding: 5) do
+    @menu_container = flow width: 1.0 do
+      stack(width: 0.35, padding: 5) do
         background 0x55004159
 
         title "Match", width: 1.0, text_align: :center
@@ -53,7 +53,7 @@ class View < CyberarmEngine::GuiState
         end
       end
 
-      stack padding_left: 50 do
+      stack width: 0.4, padding_left: 50 do
         background 0x55004159
 
         flow do
@@ -117,6 +117,14 @@ class View < CyberarmEngine::GuiState
               button.value = get_image("#{ROOT_PATH}/media/icons/musicOn.png")
             else
               button.value = get_image("#{ROOT_PATH}/media/icons/musicOff.png")
+            end
+          end
+        end
+
+        stack width: 1.0 do
+          button "Randomizer", width: 1.0, **DANGEROUS_BUTTON do
+            unless @clock.active?
+              push_state(Randomizer)
             end
           end
         end

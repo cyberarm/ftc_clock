@@ -10,6 +10,12 @@ class View < CyberarmEngine::GuiState
     @clock.controller = nil
     @last_clock_display_value = @clock.value
 
+    @particle_emitters = [
+      ParticleEmitter.new,
+    ]
+
+    @last_clock_state = @clock.active?
+
     theme(THEME)
 
     @menu_container = flow do
@@ -129,6 +135,7 @@ class View < CyberarmEngine::GuiState
   end
 
   def draw
+    @particle_emitters.each(&:draw)
     @clock.draw
 
     super
@@ -141,6 +148,11 @@ class View < CyberarmEngine::GuiState
     @clock.update
     @mouse.update
     @jukebox.update
+    @particle_emitters.each(&:update)
+
+    if @last_clock_state != @clock.active?
+      @particle_emitters.each { |emitter| @clock.active? ? emitter.clock_active! : emitter.clock_inactive! }
+    end
 
     if REMOTE_CONTROL_MODE
       @menu_container.hide
@@ -148,11 +160,11 @@ class View < CyberarmEngine::GuiState
       if @mouse.last_moved < 1.5
         @menu_container.show unless @menu_container.visible?
         window.show_cursor = true
-        @redraw_screen = true
+        #@redraw_screen = true
       else
         @menu_container.hide if @menu_container.visible?
         window.show_cursor = false
-        @redraw_screen = false
+        #@redraw_screen = false
       end
     end
 
@@ -171,6 +183,7 @@ class View < CyberarmEngine::GuiState
 
     @last_track_name = @jukebox.current_track
     @last_volume = @jukebox.volume
+    @last_clock_state = @clock.active?
   end
 
   def button_down(id)

@@ -61,6 +61,8 @@ def play_sound(sound)
       path = "media/endauto.wav"
     when :teleop_pickup_controllers
       path = "media/Pick_Up_Controllers.wav"
+    when :abort_match
+      path = "media/fogblast.wav"
     when :teleop_countdown
       path = "media/3-2-1.wav"
     when :teleop_started

@@ -16,6 +16,7 @@ require_relative "lib/jukebox"
 require_relative "lib/theme"
 require_relative "lib/clock_proxy"
 require_relative "lib/logger"
+require_relative "lib/particle_emitter"
 
 if REMOTE_CONTROL_MODE
   require "socket"

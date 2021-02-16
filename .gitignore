@@ -5,3 +5,6 @@
 !/media/music/.gitkeep
 !/media/icons/
 !/media/icons/*
+/media/particles/*
+!/media/particles/
+!/media/particles/.gitkeep

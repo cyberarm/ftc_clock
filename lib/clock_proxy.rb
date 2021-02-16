@@ -11,6 +11,8 @@ class ClockProxy
   end
 
   def start_clock(mode)
+    return if @clock.active?
+
     @clock.controller = case mode
     when :full_match
       ClockController.new(0, ClockController::FULL_MATCH)
@@ -28,12 +30,12 @@ class ClockProxy
   end
 
   def abort_clock
+    $window.current_state&.get_sample("media/fogblast.wav")&.play if @clock.active?
     @clock.controller = nil
   end
 
   def set_clock_title(string)
     @clock.title.text = string.to_s
-    pp string
     @clock.title.x = $window.width / 2 - @clock.title.width / 2
   end
 

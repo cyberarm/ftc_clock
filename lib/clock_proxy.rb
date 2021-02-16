@@ -11,7 +11,7 @@ class ClockProxy
   end
 
   def start_clock(mode)
-    return if @clock.active?
+    return if @clock.active? || $window.current_state.is_a?(Randomizer)
 
     @clock.controller = case mode
     when :full_match
@@ -85,6 +85,10 @@ class ClockProxy
 
   def jukebox_track_changed(name)
     @callbacks[:track_changed]&.call(name)
+  end
+
+  def randomizer_changed(boolean)
+    @callbacks[:randomizer_changed]&.call(boolean)
   end
 
   def shutdown!

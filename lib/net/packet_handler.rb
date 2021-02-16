@@ -54,6 +54,10 @@ class ClockNet
         handle_jukebox_set_sound_effects(packet)
       when :jukebox_current_track
         handle_jukebox_current_track(packet)
+      when :clock_time
+        handle_clock_time(packet)
+      when :randomizer_visible
+        handle_randomizer_visible(packet)
       when :shutdown
         handle_shutdown(packet)
       else
@@ -183,6 +187,23 @@ class ClockNet
       end
     end
 
+    def handle_clock_time(packet)
+      if @host_is_a_connection
+        @proxy_object.clock_changed(packet.body)
+      end
+    end
+
+    def handle_randomizer_visible(packet)
+      boolean = packet.body == "true"
+
+      @proxy_object.randomizer_changed(boolean)
+
+      unless @host_is_a_connection
+        # Send confirmation to client
+        $window.server.active_client.puts(PacketHandler.packet_randomizer_visible(boolean))
+      end
+    end
+
     def handle_shutdown(packet)
       unless @host_is_a_connection
         # $window.server.close
@@ -262,6 +283,14 @@ class ClockNet
 
     def self.packet_jukebox_current_track(name)
       Packet.create(Packet::PACKET_TYPES[:jukebox_current_track], name)
+    end
+
+    def self.packet_clock_time(string)
+      Packet.create(Packet::PACKET_TYPES[:clock_time], string)
+    end
+
+    def self.packet_randomizer_visible(boolean)
+      Packet.create(Packet::PACKET_TYPES[:randomizer_visible], boolean.to_s)
     end
 
     def self.packet_shutdown

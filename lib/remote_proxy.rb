@@ -47,6 +47,14 @@ class RemoteProxy
     @callbacks[:track_changed]&.call(name)
   end
 
+  def clock_changed(string)
+    @callbacks[:clock_changed]&.call(string)
+  end
+
+  def randomizer_changed(boolean)
+    @callbacks[:randomizer_changed]&.call(boolean)
+  end
+
   def shutdown!
   end
 end

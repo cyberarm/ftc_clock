@@ -19,6 +19,9 @@ class ClockNet
       set_clock_title: 20,
       get_clock_title: 21,
       clock_title: 22,
+      clock_time: 23,
+
+      randomizer_visible: 27,
 
       jukebox_previous_track: 30,
       jukebox_next_track: 31,

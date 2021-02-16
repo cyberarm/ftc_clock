@@ -26,6 +26,8 @@ class Clock
   end
 
   def update
+    @title.x = $window.width / 2 - @title.width / 2
+
     if @controller
       @text.color = @controller.display_color
       @text.text = clock_time(@controller.time_left)

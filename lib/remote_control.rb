@@ -76,9 +76,12 @@ class RemoteControlWindow < CyberarmEngine::Window
 
       @jukebox_volume = 1.0
       @jukebox_sound_effects = true
+      @randomizer_visible = false
 
       window.connection.proxy_object.register(:track_changed, method(:track_changed))
       window.connection.proxy_object.register(:volume_changed, method(:volume_changed))
+      window.connection.proxy_object.register(:clock_changed, method(:clock_changed))
+      window.connection.proxy_object.register(:randomizer_changed, method(:randomizer_changed))
 
       background Palette::TACNET_NOT_CONNECTED
 
@@ -201,6 +204,26 @@ class RemoteControlWindow < CyberarmEngine::Window
               end
             end
           end
+
+          stack width: 0.9, margin_left: 50, margin_top: 20 do
+            flow width: 1.0 do
+              title "Clock: "
+              @clock_label = title "0:123456789"
+              @clock_label.width
+              @clock_label.value = "0:00"
+            end
+
+            flow width: 1.0 do
+              title "Randomizer: "
+              @randomizer_label = title "Not Visible"
+            end
+
+            button "Randomizer", width: 1.0, **DANGEROUS_BUTTON do
+              @randomizer_visible = !@randomizer_visible
+
+              window.connection.puts(ClockNet::PacketHandler.packet_randomizer_visible(@randomizer_visible))
+            end
+          end
         end
       end
     end
@@ -211,7 +234,7 @@ class RemoteControlWindow < CyberarmEngine::Window
       return if window.connection.connected?
 
       # We've lost connection, unset window's connection object
-      # and set user back to connect screen to to attempt to
+      # and send user back to connect screen to to attempt to
       # reconnect
       window.connection = nil
       pop_state
@@ -227,6 +250,15 @@ class RemoteControlWindow < CyberarmEngine::Window
 
     def volume_changed(float)
       @volume.value = "#{float.round(1) * 100.0}%"
+    end
+
+    def clock_changed(string)
+      @clock_label.value = string
+    end
+
+    def randomizer_changed(boolean)
+      @randomizer_label.value = "Visible" if boolean
+      @randomizer_label.value = "Not Visible" unless boolean
     end
   end
 end

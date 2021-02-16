@@ -139,6 +139,8 @@ class View < CyberarmEngine::GuiState
       @server = ClockNet::Server.new(proxy_object: @clock_proxy)
       @server.start
       window.server = @server
+
+      @clock_proxy.register(:randomizer_changed, method(:randomizer_changed))
     end
   end
 
@@ -179,6 +181,10 @@ class View < CyberarmEngine::GuiState
     if @clock.value != @last_clock_display_value
       @last_clock_display_value = @clock.value
       @redraw_screen = true
+
+      if REMOTE_CONTROL_MODE && @server.active_client
+        @server.active_client.puts(ClockNet::PacketHandler.packet_clock_time(@last_clock_display_value))
+      end
     end
 
     if @last_track_name != @jukebox.current_track
@@ -206,6 +212,14 @@ class View < CyberarmEngine::GuiState
 
   def volume_changed(float)
     @current_volume_label.value = "#{(float.round(1) * 100.0).round}%"
+  end
+
+  def randomizer_changed(boolean)
+    if boolean
+      push_state(Randomizer)
+    else
+      pop_state if current_state.is_a?(Randomizer)
+    end
   end
 
   class Mouse

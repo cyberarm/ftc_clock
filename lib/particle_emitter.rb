@@ -1,8 +1,9 @@
 class ParticleEmitter
-  def initialize(max_particles: 50, time_to_live: 30_000, interval: 1_500)
+  def initialize(max_particles: 50, time_to_live: 30_000, interval: 1_500, z: -2)
     @max_particles = max_particles
     @time_to_live = time_to_live
     @interval = interval
+    @z = -2
 
     @particles = []
     @image_options = Dir.glob("#{ROOT_PATH}/media/particles/*.*")
@@ -27,7 +28,7 @@ class ParticleEmitter
       screen_midpoint = CyberarmEngine::Vector.new($window.width / 2, $window.height / 2)
       scale = rand(0.25..1.0)
       image = $window.current_state.get_image(@image_options.sample)
-      position = CyberarmEngine::Vector.new(0, 0, -2)
+      position = CyberarmEngine::Vector.new(0, 0)
 
       r = rand
       if r < 0.25 # LEFT
@@ -48,7 +49,6 @@ class ParticleEmitter
       position.y ||= 0
 
       velocity = (screen_midpoint - position)
-      velocity.z = -2
 
       @particles << Particle.new(
         image: image,
@@ -57,7 +57,8 @@ class ParticleEmitter
         time_to_live: @time_to_live,
         speed: rand(24..128),
         scale: scale,
-        clock_active: @clock_active
+        clock_active: @clock_active,
+        z: @z
       )
 
       @last_spawned = Gosu.milliseconds
@@ -79,12 +80,13 @@ class ParticleEmitter
   end
 
   class Particle
-    def initialize(image:, position:, velocity:, time_to_live:, speed:, scale: 1.0, clock_active: false)
+    def initialize(image:, position:, velocity:, time_to_live:, speed:, z:, scale: 1.0, clock_active: false)
       @image = image
       @position = position
       @velocity = velocity.normalized
       @time_to_live = time_to_live
       @speed = speed
+      @z = z
       @scale = scale
 
       @born_at = Gosu.milliseconds
@@ -94,7 +96,7 @@ class ParticleEmitter
     end
 
     def draw
-      @image.draw(@position.x, @position.y, @position.z, @scale, @scale, @color)
+      @image.draw(@position.x, @position.y, @z, @scale, @scale, @color)
     end
 
     def update(dt)

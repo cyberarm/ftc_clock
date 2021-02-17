@@ -30,6 +30,7 @@ class Jukebox
 
   def update
     return unless Gosu.milliseconds - @last_check_time >= 2000.0
+
     @last_check_time = Gosu.milliseconds
 
     if @song && !@song.playing? && !@song.paused?
@@ -46,7 +47,7 @@ class Jukebox
       @last_sfx_time = Gosu.milliseconds
       @sfx_random_interval = generate_sfx_period
 
-      pan = rand(0.49999..5.1111)
+      pan = rand(0.49999..0.50001)
       volume = rand(0.75..1.0)
       speed = rand(0.5..1.25)
       SAMPLES[BEEPS_AND_BOOPS.sample].play_pan(pan, volume, speed) unless @clock.active?
@@ -54,8 +55,8 @@ class Jukebox
   end
 
   def generate_sfx_period
-     rand(15..120) * 1000.0
-    # rand(5..10) * 1000.0
+    #  rand(15..120) * 1000.0
+    rand(5..10) * 1000.0
   end
 
   def set_sfx(boolean)

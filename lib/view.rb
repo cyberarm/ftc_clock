@@ -200,6 +200,11 @@ class View < CyberarmEngine::GuiState
     @last_clock_state = @clock.active?
   end
 
+  def update_non_gui
+    @particle_emitters.each(&:update)
+    @jukebox.update
+  end
+
   def button_down(id)
     super
 

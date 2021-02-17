@@ -86,6 +86,8 @@ class Randomizer < CyberarmEngine::GameState
   end
 
   def update
+    window.previous_state&.update_non_gui
+
     @rings.each { |r| r.update(window, @size) }
 
     @size = [window.width, window.height].min / 2.0

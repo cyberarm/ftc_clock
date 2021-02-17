@@ -1,5 +1,5 @@
 class ParticleEmitter
-  def initialize(max_particles: 150, time_to_live: 30_000, interval: 1_500)
+  def initialize(max_particles: 50, time_to_live: 30_000, interval: 1_500)
     @max_particles = max_particles
     @time_to_live = time_to_live
     @interval = interval

@@ -111,7 +111,7 @@ class ParticleEmitter
     end
 
     def die?
-      ratio < 0
+      ratio <= 0
     end
 
     def clock_active!

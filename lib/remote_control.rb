@@ -1,5 +1,5 @@
 begin
-  require_relative "../cyberarm_engine/lib/cyberarm_engine"
+  require_relative "../../cyberarm_engine/lib/cyberarm_engine"
 rescue LoadError
   require "cyberarm_engine"
 end

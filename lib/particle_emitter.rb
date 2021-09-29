@@ -27,7 +27,11 @@ class ParticleEmitter
     if @particles.count < @max_particles && Gosu.milliseconds - @last_spawned >= @interval
       screen_midpoint = CyberarmEngine::Vector.new($window.width / 2, $window.height / 2)
       scale = rand(0.25..1.0)
-      image = $window.current_state.get_image(@image_options.sample)
+      image_name = @image_options.sample
+
+      return unless image_name
+
+      image = $window.current_state.get_image(image_name)
       position = CyberarmEngine::Vector.new(0, 0)
 
       r = rand
